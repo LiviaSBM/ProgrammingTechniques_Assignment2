@@ -5,7 +5,13 @@ import java.util.Random;
 
 public class Mouse {
 
+    public int printStatus(mouses, traps, cheese){
+        System.out.println("[Status] cheese left: "+cheese+);
 
+        //RATO SENDO PEGO
+
+        //RATO COMENDO
+    }
 
 
 
@@ -27,10 +33,10 @@ public class Mouse {
 
         String[] myArr = new String[x];
 
-        for (int a=0; a<x; a++){
-            myArr[a]="mouse-"+(a+1);
+        //for (int a=0; a<x; a++){
+        //    myArr[a]="mouse-"+(a+1);
             //System.out.println(myArr[a]);
-        }
+        //}
         
     }
 }
