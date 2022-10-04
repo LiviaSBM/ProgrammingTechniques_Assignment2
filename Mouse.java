@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import javax.print.attribute.standard.PrinterState;
 import javax.print.event.PrintEvent;
+import javax.swing.JSpinner.DateEditor;
+
 import java.io.PrintStream;
 import java.lang.ref.Cleaner.Cleanable;
 import java.util.ArrayList;
@@ -12,8 +14,11 @@ import java.util.Random;
 
 public class Mouse {
 
-    public static int printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
-        
+    public static int printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps, List deadMouses){
+        if (index!=0 && index%5==0){ 
+            System.out.println(trapCleaning(traps, remainingTraps, deadMouses));
+        }
+
         if (mouses <= 0){
             int totalLost = (10 + (index*5)) - cheese;
             System.out.println("Total cheese lost = "+totalLost);
@@ -23,13 +28,12 @@ public class Mouse {
         cheese += 5;
         System.out.println("[Status] cheese left: "+cheese+" g");
 
-        return catchingMouse(mouses, traps, cheese, myArr, index, remainingTraps);
+        return catchingMouse(mouses, traps, cheese, myArr, index, remainingTraps, deadMouses);
     }
 
-    public static int catchingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
+    public static int catchingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps, List deadMouses){
         Random rd = new Random();
-        List deadMouses = new ArrayList();
-		
+        		
         if (traps<=mouses){
             for (int j=0; j<traps; j++){
                 boolean mousefate = rd.nextBoolean();
@@ -60,26 +64,18 @@ public class Mouse {
     public static int eatingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps, List deadMouses){
 
         if (cheese <=0 || myArr.length<=0){
-            index++;
-            if (index!=0 && index%5==0){ 
-                System.out.println(trapCleaning(traps, remainingTraps, deadMouses));
-            }
-            return printStatus(mouses, traps, cheese, myArr, index, remainingTraps);
+            return printStatus(mouses, traps, cheese, myArr, index+1, remainingTraps, deadMouses);
         } else if (cheese<=3 && cheese>0){
             System.out.println("mouse-"+myArr[0]+" ate "+cheese+" grams of cheese");
-            index++;
-            if (index!=0 && index%5==0){
-                System.out.println(trapCleaning(traps, remainingTraps, deadMouses));
-            }
             cheese = 0;
-            return printStatus(mouses, traps, cheese, myArr, index, remainingTraps);
+            return printStatus(mouses, traps, cheese, myArr, index+1, remainingTraps, deadMouses);
         } else {
             int cheeseIndex = cheese/3;
             for (int j=0; j<Math.min(cheeseIndex, myArr.length);j++){
                 System.out.println("mouse-"+myArr[j]+" ate 3 grams of cheese");
                 cheese -= 3;
             }
-            return eatingMouse(mouses, traps, cheese, myArr, cheeseIndex, remainingTraps, deadMouses);
+            return printStatus(mouses, traps, cheese, myArr, index+1, remainingTraps, deadMouses);
         }     
     }
 
@@ -94,18 +90,20 @@ public class Mouse {
         return proxyArray;
     }
 
-    public static String trapCleaning (int traps, int remainingTraps, List deadMouses){
+    public static int trapCleaning (int traps, int remainingTraps, List deadMouses){
         System.out.println("========================================================");
         for (int j=0; j<deadMouses.size()-1;j++){
             System.out.println("Store owner remove mouse-"+deadMouses.get(j));
         }
-        return "========================================================";
+        System.out.println("========================================================");
+        return eatingMouse(remainingTraps, remainingTraps, remainingTraps, null, traps, remainingTraps, deadMouses);
+
     }
 
     public static void main(String[] args) {
         Random rand = new Random(); //instance of random class
         int min = 1;
-        int max_mouses = 8; //generate random values from 1-25
+        int max_mouses = 8; //setting the range for generating random values
 
         int x = rand.nextInt(max_mouses-min+1);
         System.out.println("Quantity of mouses: "+x);
@@ -124,9 +122,10 @@ public class Mouse {
             //System.out.println(myArr[a]);
         }
 
+        List dMouses = new ArrayList();
         int i = 0;
         int rTraps = y;
-        System.out.println(printStatus(x, y, cheese_qty-5, arr, i, rTraps));
+        System.out.println(printStatus(x, y, cheese_qty-5, arr, i, rTraps, dMouses));
         
     }
 }
