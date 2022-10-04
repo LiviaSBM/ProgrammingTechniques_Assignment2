@@ -3,6 +3,7 @@
 import java.util.Scanner;
 import javax.print.event.PrintEvent;
 import java.io.PrintStream;
+import java.lang.ref.Cleaner.Cleanable;
 import java.util.Random;
 
 public class Mouse {
@@ -10,6 +11,9 @@ public class Mouse {
     public int printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
         System.out.println("[Status] cheese left: "+cheese+" g");
 
+        if (index%5==0){
+
+        }
         //FAZER IF I%5==0, LIMPAR AS TRAPS
 
 
@@ -17,15 +21,20 @@ public class Mouse {
         //RATO SENDO PEGO
 
         //RATO COMENDO
+
+        //remover traps, e a cada rodada de lpz de ratoeira, puxar valor de y?
     }
 
     public int catchingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
         Random rd = new Random();
+        caughtMouses deadMouses = new caughtMouses();
+		
         if (traps<=mouses){
             for (int j=0; j<traps; j++){
                 boolean mousefate = rd.nextBoolean();
                 if (mousefate == true){
                     System.out.println("mouse-"+myArr[i]+" caught by trap");
+                    deadMouses.AddScore(myArr[j]);
                     myArr = removeMouse(myArr, index);
                     remainingTraps --;
                     mouses --;
@@ -36,6 +45,7 @@ public class Mouse {
                 boolean mousefate = rd.nextBoolean();
                 if (mousefate == true){
                     System.out.println("mouse-"+myArr[i]+" caught by trap");
+                    deadMouses.AddScore(myArr[j]);
                     myArr = removeMouse(myArr, index);
                     remainingTraps --;
                     mouses--;
@@ -43,17 +53,31 @@ public class Mouse {
             }
         }
         
-        return //MÉTODO DO RATO COMENDO
+        return eatingMouse(mouses, traps, cheese, myArr, index, remainingTraps,deadMouses);
     }
 
-    public int eatingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
+    public int eatingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps, int[] deadMouses){
         //PAREI AQUI
 
         for (int j=0; j<myArr.length;j++){
-            if (cheese<=3 && cheese>0){
+            if (cheese <=0){
+                index++;
+                if (index%5==0){
+                    System.out.println(trapCleaning(traps, remainingTraps));
+                }
+                return printStatus(mouses, traps, cheese, myArr, index, remainingTraps);
+            } else if (cheese<=3 && cheese>0){
                 System.out.println("mouse-"+myArr[j]+" ate "+cheese+" grams of cheese");
+                index++;
+                if (index%5==0){
+                    System.out.println(trapCleaning(traps, remainingTraps));
+                }
                 cheese = 0;
-                break;
+                return printStatus(mouses, traps, cheese, myArr, index, remainingTraps);
+            } else {
+                System.out.println("mouse-"+myArr[j]+" ate 3 grams of cheese");
+                cheese -= 3;
+                return eatingMouse(mouses, traps, cheese, myArr, index, remainingTraps);
             }
         }
     }
@@ -69,6 +93,13 @@ public class Mouse {
         return proxyArray;
     }
 
+    public String trapCleaning (int traps, int remainingTraps, int[] deadMouses){
+        System.out.println("========================================================");
+        for (int j=0; i<deadMouses.length;j++){
+            System.out.println("Store owner remove mouse-"+deadMouses[j]);
+        }
+        return "========================================================";
+    }
 
     public static void main(String[] args) {
         Random rand = new Random(); //instance of random class
