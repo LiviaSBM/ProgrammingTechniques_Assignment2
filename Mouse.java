@@ -1,6 +1,8 @@
 //Student Name: Livia Menezes
 //Student ID: 261066016
 import java.util.Scanner;
+
+import javax.print.attribute.standard.PrinterState;
 import javax.print.event.PrintEvent;
 import java.io.PrintStream;
 import java.lang.ref.Cleaner.Cleanable;
@@ -8,11 +10,12 @@ import java.util.Random;
 
 public class Mouse {
 
-    public String printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
+    public static int printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
         
         if (mouses <= 0){
             int totalLost = (10 + (index*5)) - cheese;
-            return "Total cheese lost = "+totalLost;
+            System.out.println("Total cheese lost = "+totalLost);
+            return 0;
         }
 
         cheese += 5;
@@ -21,7 +24,7 @@ public class Mouse {
         return catchingMouse(mouses, traps, cheese, myArr, index, remainingTraps);
     }
 
-    public int catchingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
+    public static int catchingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
         Random rd = new Random();
         caughtMouses deadMouses = new caughtMouses();
 		
@@ -29,7 +32,7 @@ public class Mouse {
             for (int j=0; j<traps; j++){
                 boolean mousefate = rd.nextBoolean();
                 if (mousefate == true){
-                    System.out.println("mouse-"+myArr[i]+" caught by trap");
+                    System.out.println("mouse-"+myArr[j]+" caught by trap");
                     deadMouses.AddScore(myArr[j]);
                     myArr = removeMouse(myArr, index);
                     remainingTraps --;
@@ -40,7 +43,7 @@ public class Mouse {
             for (int j=0; j<mouses; j++){
                 boolean mousefate = rd.nextBoolean();
                 if (mousefate == true){
-                    System.out.println("mouse-"+myArr[i]+" caught by trap");
+                    System.out.println("mouse-"+myArr[j]+" caught by trap");
                     deadMouses.AddScore(myArr[j]);
                     myArr = removeMouse(myArr, index);
                     remainingTraps --;
@@ -59,26 +62,26 @@ public class Mouse {
             if (cheese <=0){
                 index++;
                 if (index%5==0){
-                    System.out.println(trapCleaning(traps, remainingTraps));
+                    System.out.println(trapCleaning(traps, remainingTraps, deadMouses));
                 }
                 return printStatus(mouses, traps, cheese, myArr, index, remainingTraps);
             } else if (cheese<=3 && cheese>0){
                 System.out.println("mouse-"+myArr[j]+" ate "+cheese+" grams of cheese");
                 index++;
                 if (index%5==0){
-                    System.out.println(trapCleaning(traps, remainingTraps));
+                    System.out.println(trapCleaning(traps, remainingTraps, deadMouses));
                 }
                 cheese = 0;
                 return printStatus(mouses, traps, cheese, myArr, index, remainingTraps);
             } else {
                 System.out.println("mouse-"+myArr[j]+" ate 3 grams of cheese");
                 cheese -= 3;
-                return eatingMouse(mouses, traps, cheese, myArr, index, remainingTraps);
+                return eatingMouse(mouses, traps, cheese, myArr, index, remainingTraps, deadMouses);
             }
         }
     }
 
-    public int removeMouse(int[] myArr, int index){
+    public static int[] removeMouse(int[] myArr, int index){
         int[] proxyArray = new int[myArr.length - 1];
         for (int i = 0, k=0; i<myArr.length; i++) { 
             if (i == index) { 
@@ -91,7 +94,7 @@ public class Mouse {
 
     public String trapCleaning (int traps, int remainingTraps, int[] deadMouses){
         System.out.println("========================================================");
-        for (int j=0; i<deadMouses.length;j++){
+        for (int j=0; j<deadMouses.length;j++){
             System.out.println("Store owner remove mouse-"+deadMouses[j]);
         }
         return "========================================================";
@@ -115,13 +118,13 @@ public class Mouse {
         int[] arr = new int[x];
 
         for (int a=0; a<x; a++){
-            myArr[a]=(a+1);
+            arr[a]=(a+1);
             //System.out.println(myArr[a]);
         }
 
         int i = 0;
         int rTraps = y;
-        System.out.println(PrintStream(x, y, cheese_qty-5, arr, i, rTraps));
+        System.out.println(printStatus(x, y, cheese_qty-5, arr, i, rTraps));
         
     }
 }
