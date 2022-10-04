@@ -8,21 +8,17 @@ import java.util.Random;
 
 public class Mouse {
 
-    public int printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
+    public String printStatus(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
+        
+        if (mouses <= 0){
+            int totalLost = (10 + (index*5)) - cheese;
+            return "Total cheese lost = "+totalLost;
+        }
+
+        cheese += 5;
         System.out.println("[Status] cheese left: "+cheese+" g");
 
-        if (index%5==0){
-
-        }
-        //FAZER IF I%5==0, LIMPAR AS TRAPS
-
-
-
-        //RATO SENDO PEGO
-
-        //RATO COMENDO
-
-        //remover traps, e a cada rodada de lpz de ratoeira, puxar valor de y?
+        return catchingMouse(mouses, traps, cheese, myArr, index, remainingTraps);
     }
 
     public int catchingMouse(int mouses, int traps, int cheese, int[] myArr, int index, int remainingTraps){
@@ -125,7 +121,7 @@ public class Mouse {
 
         int i = 0;
         int rTraps = y;
-        System.out.println(PrintStream(x, y, cheese_qty, arr, i, rTraps));
+        System.out.println(PrintStream(x, y, cheese_qty-5, arr, i, rTraps));
         
     }
 }
