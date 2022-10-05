@@ -8,13 +8,17 @@ import java.util.Random;
 public class Mouse {
 
     public static int statusOfMouses(int mouses, int traps, int cheese, List mouseList, List deadMousesList, int index){
-        System.out.println("Seconds: "+index);
-        System.out.println("[MAIN Status] cheese left: "+cheese);
-        System.out.println("Qty of mouses: "+mouses);
-        System.out.println("List of mouses: "+mouseList);
-        System.out.println("List of dead mouses on traps: "+deadMousesList);
-        System.out.println("Qty of remaining traps: "+traps);
-
+        if (index%2==0){
+            cheese += 10;
+            System.out.println("[Action] Cheese Machine add 10 grams of cheese");
+        }
+        //System.out.println("Seconds: "+index);
+        System.out.println("Status] cheese left: "+cheese+"\n");
+        // System.out.println("Qty of mouses: "+mouses);
+        // System.out.println("List of mouses: "+mouseList);
+        // System.out.println("List of dead mouses on traps: "+deadMousesList);
+        // System.out.println("Qty of remaining traps: "+traps);
+        
         if (mouses==0 || mouseList.size()==0){
             int cheeselost = (index-1)*5-cheese;
             System.out.println("Total cheese lost: "+cheeselost);
@@ -34,7 +38,7 @@ public class Mouse {
         for (int j=0; j<mouseList.size();j++){
             boolean mousefate = rd.nextBoolean();
             if(mousefate==true && traps>0){
-                System.out.println("[Action] mouse-"+mouseList.get(j)+" get caught\n");
+                System.out.println("[Action] mouse-"+mouseList.get(j)+" get caught by trap\n");
                 mouses--;
                 traps--;
                 deadMousesList.add(mouseList.get(j));
@@ -76,8 +80,6 @@ public class Mouse {
             return eatingMouse(mouses, traps, tempcheese, mouseList, deadMousesList, index);
         }
     }
-
-
 
     public static void main(String[] args) {
         List mList = new ArrayList();
