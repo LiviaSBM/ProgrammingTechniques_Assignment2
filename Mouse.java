@@ -1,134 +1,97 @@
 //Student Name: Livia Menezes
 //Student ID: 261066016
 
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Mouse {
 
-    public static int printStatus(int mouses, int cheese, List mousesList, int index, int remainingTraps, List deadMousesList){
-        System.out.println("[Status] cheese left: "+cheese+"\n");
-        if (index%5==0){ 
-            System.out.println(trapCleaning(mouses, cheese, mousesList, index, remainingTraps, deadMousesList));
-        } else if (mouses <= 0 || mousesList.size() <= 0){
-            int totalLost = (10 + ((index-1)*5)) - cheese;
-            System.out.println("[Status] Total cheese lost = "+totalLost);
+    public static int statusOfMouses(int mouses, int traps, int cheese, List mouseList, List deadMousesList, int index){
+        System.out.println("Seconds: "+index);
+        System.out.println("[MAIN Status] cheese left: "+cheese);
+        System.out.println("Qty of mouses: "+mouses);
+        System.out.println("List of mouses: "+mouseList);
+        System.out.println("List of dead mouses on traps: "+deadMousesList);
+        System.out.println("Qty of remaining traps: "+traps);
+
+        if (mouses==0 || mouseList.size()==0){
+            int cheeselost = (index-1)*5-cheese;
+            System.out.println("Total cheese lost: "+cheeselost);
             return 0;
-        } else if (index%2==0){
-            System.out.println("[Action] Cheese Machine add 10 grams of cheese");
-            cheese += 10;
-            System.out.println("[Status] cheese left: "+cheese+"\n");
+        } else if (index%5==0) {
+            return trapCleaning(mouses, traps, cheese, mouseList, deadMousesList, index);
+        } else {
+            return mouseRemoval(mouses, traps, cheese, mouseList, deadMousesList, index);
         }
         
-        return catchingMouse(mouses, cheese, mousesList, index, remainingTraps, deadMousesList);
     }
 
-    public static int catchingMouse(int mouses, int cheese, List mousesList, int index, int remainingTraps, List deadMousesList){
-        Random rd = new Random();
-        int min= Math.min(remainingTraps,mouses);
-
+    public static int mouseRemoval(int mouses, int traps, int cheese, List mouseList, List deadMousesList, int index){
         List proxyList = new ArrayList();
+        Random rd = new Random();
 
-        for (int j=0; j<min; j++){
+        for (int j=0; j<mouseList.size();j++){
             boolean mousefate = rd.nextBoolean();
-            if (mousefate == true){
-                System.out.println("[Action] mouse-"+mousesList.get(j)+" caught by trap"+"\n");
-                deadMousesList.add(mousesList.get(j));
-                //mousesList.remove(j);
-                remainingTraps --;
-                mouses --;
-                //min --;
+            if(mousefate==true && traps>0){
+                System.out.println("[Action] mouse-"+mouseList.get(j)+" get caught\n");
+                mouses--;
+                traps--;
+                deadMousesList.add(mouseList.get(j));
             } else {
-                proxyList.add(mousesList.get(j));
+                proxyList.add(mouseList.get(j));
             }
         }
-        mousesList = proxyList;
-        return eatingMouse(mouses, cheese, mousesList, index, remainingTraps,deadMousesList);
+        mouseList = proxyList;
+        return eatingMouse(mouses, traps, cheese, mouseList, deadMousesList, index+1);
     }
 
-    public static int eatingMouse(int mouses, int cheese, List mousesList, int index, int remainingTraps, List deadMousesList){
+    public static int trapCleaning(int mouses, int traps, int cheese, List mouseList, List deadMousesList, int index){
+        List emptyList = new ArrayList();
+        System.out.println("========================================================");
+        for (int j=0; j<deadMousesList.size();j++){
+            System.out.println("[Action] Store owner remove mouse-"+deadMousesList.get(j));
+            traps ++;
+        }
+        deadMousesList = emptyList;
+        System.out.println("========================================================\n");
+        return mouseRemoval(mouses, traps, cheese, mouseList, deadMousesList, index);
+    }
 
-        if (cheese <=0 || mousesList.size()<=0){
-            return printStatus(mouses, cheese, mousesList, index+1, remainingTraps, deadMousesList);
-        } else if (cheese<=3 && cheese>0){
-            System.out.println("[Action] mouse-"+mousesList.get(0)+" ate "+cheese+" grams of cheese");
-            cheese = 0;
+    public static int eatingMouse(int mouses, int traps, int cheese, List mouseList, List deadMousesList, int index){
+        if (cheese <= 0){
+            return statusOfMouses(mouses, traps, cheese, mouseList, deadMousesList, index);
+        }  else if (cheese>0&&cheese<=3){
+            System.out.println("[Action] mouse-"+mouseList.get(0)+" eat "+cheese+" grams of cheese");
             System.out.println("[Status] cheese left: "+cheese+"\n");
-            return printStatus(mouses, cheese, mousesList, index+1, remainingTraps, deadMousesList);
+            cheese = 0;
+            return statusOfMouses(mouses, traps, cheese, mouseList, deadMousesList, index);
         } else {
-            int cheeseIndex = cheese/3;
-            cheeseIndex = Math.min(cheeseIndex, mousesList.size());
-            for (int j=0; j<cheeseIndex;j++){
-                System.out.println("[Action] mouse-"+mousesList.get(j)+" ate 3 grams of cheese");
-                cheese -= 3;
+            int tempcheese = cheese/3;
+            for (int j=0; j<Math.min(tempcheese,mouses);j++){
+                System.out.println("[Action] mouse-"+mouseList.get(j)+" eat 3 grams of cheese");
                 System.out.println("[Status] cheese left: "+cheese+"\n");
             }
-            return printStatus(mouses, cheese, mousesList, index+1, remainingTraps, deadMousesList);
-        }     
-    }
-
-    // public static int[] removeMouse(List mousesList, int index){
-    //     int[] proxyArray = new int[myArr.length - 1];
-    //     for (int i = 0, k=0; i<myArr.length; i++) { 
-    //         if (i == index) { 
-    //             continue; 
-    //         } 
-    //         proxyArray[k++] = myArr[i]; 
-    //     }
-    //     return proxyArray;
-    // }
-
-    public static int trapCleaning (int mouses, int cheese, List mousesList, int index, int remainingTraps, List deadMousesList){
-        int removal = deadMousesList.size();
-        System.out.println("========================================================");
-        for (int j=0; j<removal;j++){
-            System.out.println("Store owner remove mouse-"+deadMousesList.get(j));
-            remainingTraps ++;
-            deadMousesList.remove(0);
+            cheese -= (tempcheese*3);
+            return eatingMouse(mouses, traps, tempcheese, mouseList, deadMousesList, index);
         }
-        System.out.println("========================================================");
-
-        return eatingMouse(mouses, cheese, mousesList, index, remainingTraps, deadMousesList);
-
     }
+
+
 
     public static void main(String[] args) {
         List mList = new ArrayList();
-
         int cheese_qty = 10;
-        int x = 5;
-        int y=3;
+        int x = 8;
+        int y=5;
         int i = 1;
 
         for (int a=0; a<x; a++){
             mList.add(a+1);
         }
 
-        //Random rand = new Random(); //instance of random class
-        //int min = 1;
-        //int max_mouses = 3; //setting the range for generating random values
+        List deadmList = new ArrayList();
+        System.out.println(statusOfMouses(x, y, cheese_qty, mList, deadmList, i));
 
-        //int x = rand.nextInt(max_mouses-min+1);
-        //System.out.println("Quantity of mouses: "+x);
-
-        //Scanner myObj = new Scanner(System.in);
-        //System.out.println("Enter the quantity of traps you'd like to try: ");
-        //int y = myObj.nextInt();
-        //System.out.println("Quantity of traps: "+y);
-        
-        //System.out.println("Initial quantity of cheese: "+cheese_qty+" grams.");
-
-        //int[] arr = new int[x];
-
-        //for (int a=0; a<x; a++){
-        //    arr[a]=(a+1);
-            //System.out.println(myArr[a]);
-        //}
-
-        List dMousesList = new ArrayList();
-        System.out.println(printStatus(x, cheese_qty, mList, i, y, dMousesList));
-        
     }
 }
