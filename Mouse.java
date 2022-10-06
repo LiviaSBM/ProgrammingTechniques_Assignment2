@@ -13,7 +13,7 @@ public class Mouse {
             System.out.println("[Action] Cheese Machine add 10 grams of cheese");
         }
         //System.out.println("Seconds: "+index);
-        System.out.println("Status] cheese left: "+cheese+"\n");
+        System.out.println("\n[Status] cheese left: "+cheese+"\n");
         // System.out.println("Qty of mouses: "+mouses);
         // System.out.println("List of mouses: "+mouseList);
         // System.out.println("List of dead mouses on traps: "+deadMousesList);
@@ -63,21 +63,35 @@ public class Mouse {
     }
 
     public static int eatingMouse(int mouses, int traps, int cheese, List mouseList, List deadMousesList, int index){
-        if (cheese <= 0){
+        int tempcheese = cheese/3;
+        if (cheese <= 0 || mouseList.size()==0){
             return statusOfMouses(mouses, traps, cheese, mouseList, deadMousesList, index);
-        }  else if (cheese>0&&cheese<=3){
+        }  else if (cheese>0 && cheese<=3){
             System.out.println("[Action] mouse-"+mouseList.get(0)+" eat "+cheese+" grams of cheese");
-            System.out.println("[Status] cheese left: "+cheese+"\n");
             cheese = 0;
+            System.out.println("[Status] cheese left: "+cheese+"\n");
             return statusOfMouses(mouses, traps, cheese, mouseList, deadMousesList, index);
-        } else {
-            int tempcheese = cheese/3;
+        } else if (cheese>3 && cheese%3==0) {
             for (int j=0; j<Math.min(tempcheese,mouses);j++){
                 System.out.println("[Action] mouse-"+mouseList.get(j)+" eat 3 grams of cheese");
+                cheese -= 3;
                 System.out.println("[Status] cheese left: "+cheese+"\n");
             }
-            cheese -= (tempcheese*3);
-            return eatingMouse(mouses, traps, tempcheese, mouseList, deadMousesList, index);
+            return statusOfMouses(mouses, traps, cheese, mouseList, deadMousesList, index);    
+
+        } else {            
+            for (int j=0; j<Math.min(tempcheese,mouses);j++){
+                System.out.println("[Action] mouse-"+mouseList.get(j)+" eat 3 grams of cheese");
+                cheese -= 3;
+                System.out.println("[Status] cheese left: "+cheese+"\n");
+                
+                if (cheese>0 && cheese<=3 && j<mouseList.size()-1){
+                    System.out.println("[Action] mouse-"+mouseList.get(j+1)+" eat "+cheese+" grams of cheese");
+                    cheese = 0;
+                    System.out.println("[Status] cheese left: "+cheese+"\n");
+                }
+            }
+            return statusOfMouses(mouses, traps, cheese, mouseList, deadMousesList, index);   
         }
     }
 
